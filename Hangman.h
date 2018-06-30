@@ -24,10 +24,13 @@ Hangman getWords(int);  // Takes int number of spaces, returns a Hangman Struct 
 bool printGuess(Hangman *, char, int, bool *);
 int getPosIfRight(int, bool *);
 
-char mostCommonCharInWord(Word *, Hangman * h);
+char mostCommonCharInWord(Word *, Hangman *);
 char mostCommonChar(Hangman *);
+char mostCommonCharNew(Hangman *);
+int makeGuess(Hangman *);
 
 void alterList(Hangman *);
+void alterForFailLetter(Hangman *, char);
 void printList(Hangman *);
 void destroyWord(Word *);
 void destroyHangman(Hangman *);

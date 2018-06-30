@@ -1,5 +1,9 @@
 #include "Hangman.h"
 
+#define NUMLINES 60392
+#define DIVISOR 10
+
+
 bool _checkForCharInWord(Hangman * h, char * word, char c){
     int i = 0;
     bool fail = true;
@@ -13,6 +17,9 @@ bool _checkForCharInWord(Hangman * h, char * word, char c){
             h->solution[i] = c;
         }
         i++;
+    }
+    if (fail){
+        alterForFailLetter(h, c);
     }
     return fail;
 }
@@ -38,17 +45,21 @@ int main(int argc, char *argv[]) {
 
     int countTotal = 0;
     int countCorrect = 0;
-    char words[60392][30];
-    int numTries[60392] = {};
-    int numFails[60392] = {};
+    char words[NUMLINES][30];
+    int numTries[NUMLINES] = {};
+    int numFails[NUMLINES] = {};
     bool quitLoop = false;
     FILE * f = fopen("words3.txt", "r");
+    if (f == NULL){
+        printf("ERROR: Bad file\n");
+        return EXIT_FAILURE;
+    }
 
     while(!quitLoop){
         //printf("HERE\n");
         char s[30];
         int stringIndex = 0;
-        if (countTotal > 60392 / 10){
+        if (countTotal > NUMLINES / DIVISOR){
             break;
         }
         while (1) {
@@ -58,7 +69,7 @@ int main(int argc, char *argv[]) {
                 quitLoop = true;
                 break;
             }
-            else if (c == '\n'){
+            else if (c == '\n' || c == 13){
                 s[stringIndex++] = '\0';    //Word being tested is null-terminated
                 int spaces = stringIndex;
                 int limbs = 0;
@@ -67,26 +78,32 @@ int main(int argc, char *argv[]) {
                 Hangman h = getWords(spaces);
 
                 while(!quit){
-                    char c = mostCommonChar(&h);
+                    char c = mostCommonCharNew(&h);
                     if (c == '\0'){
                         printf("I give up!\n");
                         quit = true;
+                        numTries[countTotal] = h.numGuessed;
+                        numFails[countTotal] = limbs;
+                        //if (limbs < 6){
+                        //    countCorrect++;
+                        //}
                         break;
                     }
                     h.charsGuessed[h.numGuessed++] = c;
                     if (_checkForCharInWord(&h, s, c)){
                         limbs++;
+                        alterList(&h);
                     }
                     else {
                         if (_checkIfNotSolved(&h, s)){
-                            alterList(&h);
+                            // nothing here
                         }
                         else {
                             numTries[countTotal] = h.numGuessed;
                             numFails[countTotal] = limbs;
-                            if (limbs < 6){
+                            //if (limbs < 6){
                                 countCorrect++;
-                            }
+                            //}
                             break;
                         }
                     }
@@ -102,9 +119,10 @@ int main(int argc, char *argv[]) {
             }
         }
     }
-    for (int i = 0; i < 60392 / 10; i++) {
+    for (int i = 0; i < NUMLINES / DIVISOR; i++) {
         printf("%s - Tries: %d - Fails: %d - %s\n", numFails[i] < 6 ? "YES" : "NO", numTries[i], numFails[i], words[i]);
     }
+    printf("%d/%d\n", countCorrect, countTotal);
     fclose(f);
     return 0;
 }

@@ -13,7 +13,12 @@ int main(int argc, char *argv[]) {
         }
         printf("\n");
         printf("Limbs: %d\n", limbs);
-        char c = mostCommonChar(&h);
+        int guessIndex = makeGuess(&h);
+        if(guessIndex >= 0){
+            printf("The word is: %s\n", h.words[guessIndex].word);
+            break;
+        }
+        char c = mostCommonCharNew(&h);
         if (c == '\0'){
             printf("I give up! You win\n");
             quit = true;

@@ -1,5 +1,7 @@
 #include "Hangman.h"
 
+#define WORDFILE "words2.txt"
+
 int getSpaces(){
 
     char input[2]= "";
@@ -38,7 +40,7 @@ int getSpaces(){
 }
 
 int _getNum(int numSpaces){
-    FILE * f = fopen("words3.txt", "r");
+    FILE * f = fopen(WORDFILE, "r");
     bool endOfFile = false;
     int numMatch = 0;
     while (!endOfFile){
@@ -52,8 +54,11 @@ int _getNum(int numSpaces){
                 endOfFile = true;
                 break;
             }
-            else if (c == '\n' && count == numSpaces){
+            else if ((c == '\n' || c == 13) && count == numSpaces){
                 numMatch++;
+                if (c == 13){
+                    fgetc(f);
+                }
                 break;
             }
             else if (c == '\n'){
@@ -65,13 +70,13 @@ int _getNum(int numSpaces){
         }
     }
     endOfFile = false;
-    //printf("%d\n", numMatch);
+    printf("%d\n", numMatch);
     fclose(f);
     return numMatch;
 }
 
 Hangman getWords(int numSpaces){
-    FILE * f = fopen("words3.txt", "r");
+    FILE * f = fopen(WORDFILE, "r");
     int numMatch = _getNum(numSpaces);
     bool endOfFile = false;
 
@@ -98,7 +103,7 @@ Hangman getWords(int numSpaces){
                 endOfFile = true;
                 break;
             }
-            else if (c == '\n' && count == numSpaces){
+            else if ((c == '\n' || c == 13) && count == numSpaces){
                 //printf("int: %d/%d    Word : %s     place : %d -- %d\n", wordIndex, numMatch, string, placement, count);
                 h.words[wordIndex].word = malloc((sizeof(char) * numSpaces) + 1);
                 h.words[wordIndex].place = placement;
@@ -107,6 +112,9 @@ Hangman getWords(int numSpaces){
                 }
                 h.words[wordIndex].word[numSpaces] = '\0';
                 wordIndex++;
+                if (c == 13){
+                    fgetc(f);
+                }
                 break;
             }
             else if (c == '\n'){
@@ -165,6 +173,9 @@ bool printGuess(Hangman * h, char c, int numSpaces, bool * quit){
             h->solution[posArr[i]] = c;
         }
         alterList(h);
+    }
+    else {
+        alterForFailLetter(h, c);
     }
     return failure;
 }
@@ -240,6 +251,29 @@ bool _charNotGuessed(char c, Hangman * h){
     return notGuessed;
 }
 
+bool _checkWordForNoBadChar(char * word, char fail){   // Checks if a word in the words list is still valid with the current working solution
+    int i = 0;
+    bool good = true;
+    while (word[i] != '\0'){
+        if (word[i] == fail){
+            good = false;
+            break;
+        }
+        i++;
+    }
+    return good;
+}
+
+void alterForFailLetter(Hangman * h, char fail){
+    for (int i = 0; i < h->numWords; i++) {
+        if (h->words[i].word != NULL && h->words[i].place != -1){   //Check to make sure its not gone
+            if (!_checkWordForNoBadChar(h->words[i].word, fail)) {
+                destroyWord(&(h->words[i]));
+            }
+        }
+    }
+}
+
 char mostCommonCharInWord(Word * w, Hangman * h){
     int charFreq[26] = {0};
     int count = 0;
@@ -266,6 +300,39 @@ char mostCommonChar(Hangman * h){
             charFreq[ mostCommonCharInWord( &(h->words[i]), h) - 97 ]++;
         }
     }
+    for (int i = 0; i < 26; i++) {
+        //printf("%c-%d,\n", 97+i, charFreq[i]);
+    }
+    int highChar = 0;
+    int highestAmount = 0;
+    for (int i = 0; i < 26; i++) {
+        if(charFreq[i] > highestAmount && _charNotGuessed(i + 97, h)){
+            highChar = i;
+            highestAmount = charFreq[i];
+        }
+    }
+    if (!_charNotGuessed(highChar + 97, h)){
+        return '\0';
+    }
+    return highChar + 97;
+}
+
+char mostCommonCharNew(Hangman * h){
+    int charFreq[26] = {};
+    for (int i = 0; i < h->numWords; i++) {
+        if (h->words[i].word != NULL && h->words[i].place != -1){   //Check to make sure its not gone
+            int count = 0;
+            while (h->words[i].word[count] != '\0'){
+                //printf("%c",w->word[count] );
+                int index = h->words[i].word[count++]-97;
+                int addTotal = 10 * (300000 - h->words[i].place) / 300000;
+                charFreq[index] += addTotal;
+            }
+        }
+    }
+    // for (int i = 0; i < 26; i++) {
+    //     printf("%c-%d,\n", 97+i, charFreq[i]);
+    // }
     int highChar = 0;
     int highestAmount = 0;
     for (int i = 0; i < 26; i++) {
@@ -284,9 +351,26 @@ void printList(Hangman * h){
     int count = 0;
     for (int i = 0; i < h->numWords; i++) {
         if (h->words[i].word != NULL && h->words[i].place != -1){   //Check to make sure its not gone
-            //printf("%s\n", h->words[i].word);
+            printf("%s .. %d\n", h->words[i].word, 100 * (300000 - h->words[i].place) / 300000);
             count++;
         }
     }
-    //printf("Possible word count: %d\n", count );
+    printf("Possible word count: %d\n", count );
+}
+
+int makeGuess(Hangman * h){
+    int count = 0;
+    int index = -1;
+    for (int i = 0; i < h->numWords; i++) {
+        if (h->words[i].word != NULL && h->words[i].place != -1){   //Check to make sure its not gone
+            count++;
+            index = i;
+        }
+    }
+    if(count == 1){
+        return index;
+    }
+    else {
+        return -1;
+    }
 }
