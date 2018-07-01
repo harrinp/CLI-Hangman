@@ -462,7 +462,7 @@ void newPrinter(Hangman * h, int limbs, int spaces, char guess){
     }
     _quickGetEnd(f);
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 2; i++) {
         printf("  ");
         _quickGetEnd(f);
     }
