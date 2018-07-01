@@ -9,9 +9,6 @@ int main(int argc, char *argv[]) {
 
     while(!quit){
 
-        for (int i = 0; i < h.numGuessed; i++) {
-            printf("%c, ", h.charsGuessed[i]);
-        }
         printf("\n");
         int guessIndex = makeGuess(&h);
         if(guessIndex >= 0){
