@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <unistd.h>
 
 typedef struct _Word {
     char * word;
@@ -34,4 +35,7 @@ void alterForFailLetter(Hangman *, char);
 void printList(Hangman *);
 void destroyWord(Word *);
 void destroyHangman(Hangman *);
+
+void printGuy(int, char *, char);
+void clearScreen();
 #endif

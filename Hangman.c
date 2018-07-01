@@ -11,7 +11,7 @@ int getSpaces(){
 
     while(!correctInput){
         count = 0;
-        printf("Welcome to Hangman!\nWhen entering values do it like this: 2,5,6\nEnter the number of letters in your word: \n");
+        printf("%cWelcome to Hangman!\nWhen entering values do it like this: 2,5,6\nEnter the number of letters in your word: \n",8);
         while (1){
             if (count > 3){
                 printf("Too Long - Error try again\n");
@@ -147,8 +147,8 @@ void destroyHangman(Hangman * h){
 
 bool printGuess(Hangman * h, char c, int numSpaces, bool * quit){
     h->charsGuessed[h->numGuessed++] = c;
-    printf("GUESS -->: %c\n", c);
-    printf("Correct?\n");
+    //printf("GUESS -->: %c\n", c);
+    //printf("Correct?\n");
     int posArr[25] = {};
     int counter = 0;
     bool failure = false;
@@ -351,7 +351,7 @@ void printList(Hangman * h){
     int count = 0;
     for (int i = 0; i < h->numWords; i++) {
         if (h->words[i].word != NULL && h->words[i].place != -1){   //Check to make sure its not gone
-            printf("%s .. %d\n", h->words[i].word, 100 * (300000 - h->words[i].place) / 300000);
+            //printf("%s .. %d\n", h->words[i].word, 100 * (300000 - h->words[i].place) / 300000);
             count++;
         }
     }
@@ -373,4 +373,32 @@ int makeGuess(Hangman * h){
     else {
         return -1;
     }
+}
+
+void printGuy(int limbs, char * solution, char guess){
+
+    char * manArr[7] = {
+    "     (+)========II     __  __\n      |         ||    / / / /___ _____  ____ _____ ___  ____ _____\n      |         ||   / /_/ / __ `/ __ \\/ __ `/ __ `__ \\/ __ `/ __ \\\n      |         ||  / __  / /_/ / / / / /_/ / / / / / / /_/ / / / /\n      |         || /_/ /_/\\__,_/_/ /_/\\__, /_/ /_/ /_/\\__,_/_/ /_/ \n      |         ||                   /____/\n     _|_        ||\n    /   \\       ||\n   |     |      ||\n    \\ _ /       ||\n                ||\n                ||\n                ||",
+    "     (+)========II     __  __\n       \\        ||    / / / /___ _____  ____ _____ ___  ____ _____\n        \\       ||   / /_/ / __ `/ __ \\/ __ `/ __ `__ \\/ __ `/ __ \\\n         \\      ||  / __  / /_/ / / / / /_/ / / / / / / /_/ / / / /\n    .---. |     || /_/ /_/\\__,_/_/ /_/\\__, /_/ /_/ /_/\\__,_/_/ /_/ \n    | 00| |     ||                   /____/\n    | - | |     ||\n    '-.-'/      ||\n     ---<       ||\n                ||\n                ||\n                ||\n                ||",
+    "     (+)========II     __  __\n       \\        ||    / / / /___ _____  ____ _____ ___  ____ _____\n        \\       ||   / /_/ / __ `/ __ \\/ __ `/ __ `__ \\/ __ `/ __ \\\n         \\      ||  / __  / /_/ / / / / /_/ / / / / / / /_/ / / / /\n    .---. |     || /_/ /_/\\__,_/_/ /_/\\__, /_/ /_/ /_/\\__,_/_/ /_/ \n    | 00| |     ||                   /____/\n    | - | |     ||\n    '-.-'/      ||\n     ---<       ||\n     |*|        ||\n     |*|        ||\n     |_|        ||\n                ||",
+    "     (+)========II     __  __\n       \\        ||    / / / /___ _____  ____ _____ ___  ____ _____\n        \\       ||   / /_/ / __ `/ __ \\/ __ `/ __ `__ \\/ __ `/ __ \\\n         \\      ||  / __  / /_/ / / / / /_/ / / / / / / /_/ / / / /\n    .---. |     || /_/ /_/\\__,_/_/ /_/\\__, /_/ /_/ /_/\\__,_/_/ /_/ \n    | 00| |     ||                   /____/\n    | - | |     ||\n    '-.-'/      ||\n     ---<       ||\n   //|*|        ||\n  // |*|        ||\n[_]  |_|        ||\n                ||",
+    "     (+)========II     __  __\n       \\        ||    / / / /___ _____  ____ _____ ___  ____ _____\n        \\       ||   / /_/ / __ `/ __ \\/ __ `/ __ `__ \\/ __ `/ __ \\\n         \\      ||  / __  / /_/ / / / / /_/ / / / / / / /_/ / / / /\n    .---. |     || /_/ /_/\\__,_/_/ /_/\\__, /_/ /_/ /_/\\__,_/_/ /_/ \n    | 00| |     ||                   /____/\n    | - | |     ||\n    '-.-'/      ||\n     ---<       ||\n   //|*|\\\\      ||\n  // |*| \\\\     ||\n[_]  |_|  [_]   ||\n                ||",
+    "     (+)========II     __  __\n       \\        ||    / / / /___ _____  ____ _____ ___  ____ _____\n        \\       ||   / /_/ / __ `/ __ \\/ __ `/ __ `__ \\/ __ `/ __ \\\n         \\      ||  / __  / /_/ / / / / /_/ / / / / / / /_/ / / / /\n    .---. |     || /_/ /_/\\__,_/_/ /_/\\__, /_/ /_/ /_/\\__,_/_/ /_/ \n    | 00| |     ||                   /____/\n    | - | |     ||\n    '-.-'/      ||\n     ---<       ||\n   //|*|\\\\      ||\n  // |*| \\\\     ||\n[_]  |_|  [_]   ||\n    / /         ||",
+    "     (+)========II     __  __\n       \\        ||    / / / /___ _____  ____ _____ ___  ____ _____\n        \\       ||   / /_/ / __ `/ __ \\/ __ `/ __ `__ \\/ __ `/ __ \\\n         \\      ||  / __  / /_/ / / / / /_/ / / / / / / /_/ / / / /\n    .---. |     || /_/ /_/\\__,_/_/ /_/\\__, /_/ /_/ /_/\\__,_/_/ /_/ \n    | XX| |     ||                   /____/\n    | - | |     ||\n    '-.-'/      ||\n     ---<       ||\n   //|*|\\\\      ||\n  // |*| \\\\     ||\n[_]  |_|  [_]   ||\n    / | \\       ||" };
+
+    char * manArrFeet[7] = {"                ||","                ||","                ||","                ||","                ||",  "  [_]           ||","  [_]   [_]     ||"};
+    char * manArrLegs[7] = {"                ||", "                ||", "                ||", "                ||", "                ||", "   /_/          ||", "   /_/ \\_\\      ||"};
+
+    printf("%c%s  Letters: %s\n", 8,  manArr[limbs], solution);
+    printf("%s\n", manArrLegs[limbs]);
+    printf("%s  Guess  : %c\n", manArrFeet[limbs], guess);
+
+    printf("                ||\n");
+    printf("****************II  %s ", limbs != 6 ? "Input  :" : "I lose...");
+}
+
+void clearScreen()
+{
+  const char *CLEAR_SCREEN_ANSI = "\e[1;1H\e[2J";
+  write(STDOUT_FILENO, CLEAR_SCREEN_ANSI, 12);
 }

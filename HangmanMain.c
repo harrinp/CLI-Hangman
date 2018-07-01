@@ -1,18 +1,18 @@
 #include "Hangman.h"
 
 int main(int argc, char *argv[]) {
-
+    clearScreen();
     int spaces = getSpaces();
     Hangman h = getWords(spaces);
     int limbs = 0;
     bool quit = false;
+
     while(!quit){
-        printf("Current solution: %s \nGuesses: ", h.solution);
+
         for (int i = 0; i < h.numGuessed; i++) {
             printf("%c, ", h.charsGuessed[i]);
         }
         printf("\n");
-        printf("Limbs: %d\n", limbs);
         int guessIndex = makeGuess(&h);
         if(guessIndex >= 0){
             printf("The word is: %s\n", h.words[guessIndex].word);
@@ -24,12 +24,19 @@ int main(int argc, char *argv[]) {
             quit = true;
             break;
         }
-        bool fail = printGuess(&h, c, spaces, &quit);
+        else if (limbs == 6){
+            quit = true;
+        }
+        clearScreen();
+        printGuy(limbs, h.solution,c);
+        bool fail = false;
+        if (!quit){
+            fail = printGuess(&h, c, spaces, &quit);
+        }
         if (fail){
             limbs++;
         }
-        printList(&h);
-        printf("\n\n");
+        //printList(&h);
     }
 
     destroyHangman(&h);
