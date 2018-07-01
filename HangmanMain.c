@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
         printf("\n");
         int guessIndex = makeGuess(&h);
         if(guessIndex >= 0){
-            printf("The word is: %s\n", h.words[guessIndex].word);
+            printf("%sThe word is: %s%s\n", BLDOFF, BLU, h.words[guessIndex].word);
             break;
         }
         char c = mostCommonCharNew(&h);
@@ -28,7 +28,8 @@ int main(int argc, char *argv[]) {
             quit = true;
         }
         clearScreen();
-        printGuy(limbs, h.solution,c);
+        //printGuy(limbs, h.solution, c);
+        newPrinter(&h, limbs, spaces, c);
         bool fail = false;
         if (!quit){
             fail = printGuess(&h, c, spaces, &quit);

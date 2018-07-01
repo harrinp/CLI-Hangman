@@ -2,16 +2,20 @@
 
 #define WORDFILE "words2.txt"
 
+void _printLogo(){
+    printf("%c%s    __  __                                      \n   / / / /___ _____  ____ _____ ___  ____ _____ \n  / /_/ / __ `/ __ \\/ __ `/ __ `__ \\/ __ `/ __ \\\n / __  / /_/ / / / / /_/ / / / / / / /_/ / / / /\n/_/ /_/\\__,_/_/ /_/\\__, /_/ /_/ /_/\\__,_/_/ /_/ \n                  /____/                        %s\n  .__.\n",8, RED,NORM);
+}
+
 int getSpaces(){
 
     char input[2]= "";
     int count = 0;
     bool correctInput = false;
     int num = 0;
-
+    _printLogo();
     while(!correctInput){
         count = 0;
-        printf("%cWelcome to Hangman!\nWhen entering values do it like this: 2,5,6\nEnter the number of letters in your word: \n",8);
+        printf("%c %s%sO%s%s|  | %sWelcome to Hangman!%s\n-|-  | When entering values do it like this: %s2,5,6%s\n/|   | Please enter the number of letters in your word: ",8, UNDER, ITAL, ITALOFF, UNDEROFF, BLD, BLDOFF, BLINK, BLINKOFF);
         while (1){
             if (count > 3){
                 printf("Too Long - Error try again\n");
@@ -401,4 +405,101 @@ void clearScreen()
 {
   const char *CLEAR_SCREEN_ANSI = "\e[1;1H\e[2J";
   write(STDOUT_FILENO, CLEAR_SCREEN_ANSI, 12);
+}
+
+void _readAndPrint(FILE * f, bool toEndOfLine, int numChars){
+    if (toEndOfLine){
+        while(1){
+            int c = fgetc(f);
+            if (c == '\n' || c == EOF){
+                printf("\n");
+                break;
+            }
+            printf("%c",c);
+        }
+    }
+    else {
+        for (int i = 0; i < numChars; i++) {
+            int c = fgetc(f);
+            if (c == '\n' || c == EOF){
+                printf("\n");
+                break;
+            }
+            printf("%c",c);
+        }
+    }
+}
+
+void _quickGetEnd(FILE * f){
+    _readAndPrint(f, true, 0);
+}
+
+void newPrinter(Hangman * h, int limbs, int spaces, char guess){
+    FILE * f = fopen("images", "r");
+    // Go through all lines until the image needed
+    for (int i = 0; i < limbs * IMGHEIGHT; i++) {
+        while(1){
+            int c = fgetc(f);
+            if (c == '\n'){
+                break;
+            }
+        }
+    }
+    printf("%s", BLDOFF);
+    for (int i = 0; i < 8; i++) {
+        printf("  ");
+        _readAndPrint(f, false, IMGWIDTH);
+        printf("%s", RED);
+        _quickGetEnd(f);
+        printf("%s", NORM);
+    }
+
+    printf("  ");
+    _readAndPrint(f, false, IMGWIDTH);
+    printf("  Guesses : ");
+    for (int i = 0; i < h->numGuessed; i++) {
+        printf("%c, ", h->charsGuessed[i]);
+    }
+    _quickGetEnd(f);
+
+    for (int i = 0; i < 3; i++) {
+        printf("  ");
+        _quickGetEnd(f);
+    }
+
+    printf("  ");
+    _readAndPrint(f, false, IMGWIDTH);
+    printf("  Letters: %s", h->solution);
+    _quickGetEnd(f);
+
+    printf("  ");
+    _readAndPrint(f, false, IMGWIDTH);
+    printf("           %s", FAINT);
+    for (int i = 1; i <= spaces; i++) {
+        if (i % 2 == 0){
+            printf("%d", i);
+        }
+        else {
+            printf(" ");
+        }
+    }
+    printf("%s", FAINTOFF);
+    _quickGetEnd(f);
+
+    printf("  ");
+    _readAndPrint(f, true, 0);
+
+    printf("  ");
+    _readAndPrint(f, false, IMGWIDTH);
+    printf("  Guess  : %c", guess);
+    _quickGetEnd(f);
+
+    printf("  ");
+    _readAndPrint(f, true, IMGWIDTH);
+
+    printf("  ");
+    _readAndPrint(f, false, IMGWIDTH);
+    printf("  Input  : %s", BLD);
+
+    fclose(f);
 }
