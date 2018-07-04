@@ -25,7 +25,6 @@ int main(int argc, char *argv[]) {
             quit = true;
         }
         clearScreen();
-        //printGuy(limbs, h.solution, c);
         newPrinter(&h, limbs, spaces, c);
         bool fail = false;
         if (!quit){
@@ -34,7 +33,6 @@ int main(int argc, char *argv[]) {
         if (fail){
             limbs++;
         }
-        //printList(&h);
     }
 
     destroyHangman(&h);
